@@ -170,11 +170,12 @@ function ChatContent() {
   const [personas, setPersonas] = useState({});
   const [selectedPersona, setSelectedPersona] = useState("professor");
 
+  // Carregar personas do backend
   useEffect(() => {
     const fetchPersonas = async () => {
       try {
         const response = await getPersonas();
-        setPersonas(response.personas);
+        setPersonas(response.personas || {});
       } catch (error) {
         console.error("Erro ao buscar personas:", error);
       }
@@ -183,27 +184,35 @@ function ChatContent() {
   }, []);
 
   useEffect(() => {
-    console.log("Rodou useEffect", { isAuthenticated, user });
+    if (selectedPersona && personas[selectedPersona] === undefined) {
+      const primeiraPersona = Object.keys(personas)[0];
+      if (primeiraPersona) setSelectedPersona(primeiraPersona);
+    }
+  }, [personas]);
 
-    if (isAuthenticated && user) {
-      console.log("👉 ENTROU NO IF com:", user);
-      getPersona()
-        .then(personaResponse => {
+  useEffect(() => {
+    const loadUserPreferences = async () => {
+      console.log("Rodou useEffect", { isAuthenticated, user });
+
+      if (isAuthenticated && user) {
+        console.log("👉 ENTROU NO IF com:", user);
+        try {
+          const personaResponse = await getPersona();
           console.log("Persona recebida:", personaResponse);
-          if (personaResponse) {
+          if (personaResponse && personas[personaResponse] !== undefined) {
             setSelectedPersona(personaResponse);
           }
-        })
-        .catch(error => {
+        } catch (error) {
           console.error("Erro ao buscar persona do usuário:", error);
-        });
-    }
+        }
+      }
 
-    const savedVoice = localStorage.getItem('lyriaVoice');
-    if (savedVoice) {
-      setSelectedVoice(savedVoice);
-    }
-  }, [isAuthenticated, user]);
+      const savedVoice = localStorage.getItem("lyriaVoice");
+      if (savedVoice) setSelectedVoice(savedVoice);
+    };
+
+    loadUserPreferences();
+  }, [isAuthenticated, user, personas]);
 
 
   const fetchConversations = async () => {
@@ -525,7 +534,7 @@ function ChatContent() {
           </Link>
           <div className="header-voice-controls">
             <select
-              value={personas[selectedPersona] ? selectedPersona : Object.keys(personas)[0] || ""}
+              value={selectedPersona}
               onChange={handlePersonaChange}
               className="voice-select"
               title="Selecionar persona"
