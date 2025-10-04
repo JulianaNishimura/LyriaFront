@@ -183,22 +183,13 @@ function ChatContent() {
     fetchPersonas();
   }, []);
 
+  // Carregar persona do usuário **apenas depois que as personas estiverem carregadas**
   useEffect(() => {
-    if (selectedPersona && personas[selectedPersona] === undefined) {
-      const primeiraPersona = Object.keys(personas)[0];
-      if (primeiraPersona) setSelectedPersona(primeiraPersona);
-    }
-  }, [personas]);
-
-  useEffect(() => {
-    const loadUserPreferences = async () => {
-      console.log("Rodou useEffect", { isAuthenticated, user });
-
-      if (isAuthenticated && user) {
-        console.log("👉 ENTROU NO IF com:", user);
+    const loadUserPersona = async () => {
+      if (isAuthenticated && user && Object.keys(personas).length > 0) {
         try {
           const personaResponse = await getPersona();
-          console.log("Persona recebida:", personaResponse);
+          console.log("Persona recebida do backend:", personaResponse);
           if (personaResponse && personas[personaResponse] !== undefined) {
             setSelectedPersona(personaResponse);
           }
@@ -206,14 +197,9 @@ function ChatContent() {
           console.error("Erro ao buscar persona do usuário:", error);
         }
       }
-
-      const savedVoice = localStorage.getItem("lyriaVoice");
-      if (savedVoice) setSelectedVoice(savedVoice);
     };
-
-    loadUserPreferences();
+    loadUserPersona();
   }, [isAuthenticated, user, personas]);
-
 
   const fetchConversations = async () => {
     if (isAuthenticated && user) {
