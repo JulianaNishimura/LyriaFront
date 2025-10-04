@@ -412,7 +412,7 @@ function ChatContent() {
     try {
       await deleteConversation(chatToDelete);
       addToast("Conversa deletada com sucesso.", "success");
-      fetchConversations(); // Atualiza a lista
+      fetchConversations(); 
       if (currentChatId === chatToDelete) {
         setCurrentChatId(null);
         setMessages([]);
@@ -519,18 +519,20 @@ function ChatContent() {
             <h1>LyrIA</h1>
           </Link>
           <div className="header-voice-controls">
-            <select
-              value={selectedPersona}
-              onChange={handlePersonaChange}
-              className="voice-select"
-              title="Selecionar persona"
-            >
-              {Object.keys(personas).map((key) => (
-                <option key={key} value={key}>
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
-                </option>
-              ))}
-            </select>
+            {Object.keys(personas).length > 0 && (
+              <select
+                value={selectedPersona}
+                onChange={handlePersonaChange}
+                className="voice-select"
+                title="Selecionar persona"
+              >
+                {Object.keys(personas).map((key) => (
+                  <option key={key} value={key}>
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                  </option>
+                ))}
+              </select>
+            )}
             <select
               value={selectedVoice}
               onChange={handleVoiceChange}
