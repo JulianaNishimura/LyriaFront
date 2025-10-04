@@ -182,29 +182,29 @@ function ChatContent() {
     fetchPersonas();
   }, []);
 
-  // Efeito para carregar a persona e a voz do usuário ao entrar no chat
   useEffect(() => {
-    const loadUserPreferences = async () => {
-      console.log(`${isAuthenticated} user: ${user}`)
-      if (isAuthenticated && user) {
-        // Carregar persona do backend
-        try {
-          const personaResponse = await getPersona();
-          if (personaResponse && personaResponse.persona) {
-            setSelectedPersona(personaResponse.persona);
+    console.log("Rodou useEffect", { isAuthenticated, user });
+
+    if (isAuthenticated && user) {
+      console.log("👉 ENTROU NO IF com:", user);
+      getPersona()
+        .then(personaResponse => {
+          console.log("Persona recebida:", personaResponse);
+          if (personaResponse) {
+            setSelectedPersona(personaResponse);
           }
-        } catch (error) {
+        })
+        .catch(error => {
           console.error("Erro ao buscar persona do usuário:", error);
-        }
-      }
-      // Carregar voz do localStorage (para todos os usuários)
-      const savedVoice = localStorage.getItem('lyriaVoice');
-      if (savedVoice) {
-        setSelectedVoice(savedVoice);
-      }
-    };
-    loadUserPreferences();
+        });
+    }
+
+    const savedVoice = localStorage.getItem('lyriaVoice');
+    if (savedVoice) {
+      setSelectedVoice(savedVoice);
+    }
   }, [isAuthenticated, user]);
+
 
   const fetchConversations = async () => {
     if (isAuthenticated && user) {
