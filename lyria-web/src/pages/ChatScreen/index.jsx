@@ -169,8 +169,7 @@ function ChatContent() {
   const [chatToDelete, setChatToDelete] = useState(null);
   const [personas, setPersonas] = useState({});
   const [selectedPersona, setSelectedPersona] = useState("professor");
-
-  // Carregar personas do backend
+// Carregar personas do backend
   useEffect(() => {
     const fetchPersonas = async () => {
       try {
@@ -183,15 +182,19 @@ function ChatContent() {
     fetchPersonas();
   }, []);
 
-  // Carregar persona do usuário **apenas depois que as personas estiverem carregadas**
+  // Carregar persona do usuário quando autenticado e personas disponíveis
   useEffect(() => {
     const loadUserPersona = async () => {
       if (isAuthenticated && user && Object.keys(personas).length > 0) {
         try {
           const personaResponse = await getPersona();
           console.log("Persona recebida do backend:", personaResponse);
-          if (personaResponse && personas[personaResponse] !== undefined) {
+          // Verifica se a persona existe nas personas disponíveis
+          if (personaResponse && personas[personaResponse]) {
+            console.log("Setando persona para:", personaResponse);
             setSelectedPersona(personaResponse);
+          } else {
+            console.log("Persona não encontrada, mantendo padrão");
           }
         } catch (error) {
           console.error("Erro ao buscar persona do usuário:", error);
