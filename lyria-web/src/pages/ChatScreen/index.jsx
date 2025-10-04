@@ -181,9 +181,9 @@ function ChatContent() {
     };
     fetchPersonas();
   }, []);
-  
+
   useEffect(() => {
-    console.log("Entrou na página de chat", { isAuthenticated, user });
+    console.log("Rodou useEffect", { isAuthenticated, user });
 
     if (isAuthenticated && user) {
       console.log("👉 ENTROU NO IF com:", user);
@@ -203,7 +203,7 @@ function ChatContent() {
     if (savedVoice) {
       setSelectedVoice(savedVoice);
     }
-  }, []);
+  }, [isAuthenticated, user]);
 
 
   const fetchConversations = async () => {
