@@ -525,7 +525,7 @@ function ChatContent() {
           </Link>
           <div className="header-voice-controls">
             <select
-              value={selectedPersona}
+              value={personas[selectedPersona] ? selectedPersona : Object.keys(personas)[0] || ""}
               onChange={handlePersonaChange}
               className="voice-select"
               title="Selecionar persona"
