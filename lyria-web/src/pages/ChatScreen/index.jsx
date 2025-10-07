@@ -291,7 +291,7 @@ function ChatContent() {
       requestCancellationRef.current = { cancel: () => controller.abort() };
 
       if (isAuthenticated && user) {
-        response = await postMessage(user.nome, sentFromChatId, trimmedInput, controller.signal);
+        response = await postMessage(user.nome, trimmedInput, sentFromChatId, controller.signal);
 
         if (currentChatId !== sentFromChatId) {
           console.log("Request was for a different chat. Ignoring response.");
