@@ -11,11 +11,11 @@ export const conversarAnonimo = async (pergunta, persona, signal) => {
   }
 };
 
-export const postMessage = async (usuario, pergunta, conversaId, signal) => {
+export const postMessage = async (pergunta, signal) => {
   try {
     const response = await api.post(
       "/Lyria/conversar-logado",
-      { usuario, pergunta, conversa_id: conversaId },
+      { pergunta },
       { signal }
     );
     return response.data;
