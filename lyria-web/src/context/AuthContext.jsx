@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { login as apiLogin } from '../services/LyriaApi';
+import api from '../services/api'; // Importe a instância do axios
 
 const AuthContext = createContext();
 
@@ -8,77 +9,100 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Carregar dados do usuário do localStorage ao iniciar
+  // Verifica se há sessão ativa no backend ao iniciar
   useEffect(() => {
-    const loadUserFromStorage = () => {
+    const checkSession = async () => {
       try {
-        const storedUser = localStorage.getItem('lyriaUser');
+        console.log('🔍 Verificando sessão no backend...');
+        const response = await api.get('/Lyria/check-session');
         
-        if (storedUser) {
-          const userData = JSON.parse(storedUser);
+        if (response.data.autenticado) {
+          console.log('✅ Sessão ativa encontrada:', response.data);
+          
+          // Recupera dados do localStorage ou usa os da sessão
+          const storedUser = localStorage.getItem('lyriaUser');
+          const userData = storedUser ? JSON.parse(storedUser) : {
+            nome: response.data.usuario,
+            email: response.data.email,
+          };
+          
           setUser(userData);
           setIsAuthenticated(true);
+        } else {
+          console.log('❌ Nenhuma sessão ativa no backend');
+          // Limpa dados locais se não há sessão no backend
+          localStorage.removeItem('lyriaUser');
+          setUser(null);
+          setIsAuthenticated(false);
         }
       } catch (error) {
-        console.error('Erro ao carregar dados do usuário:', error);
+        console.error('❌ Erro ao verificar sessão:', error);
+        // Se der erro, limpa tudo
         localStorage.removeItem('lyriaUser');
+        setUser(null);
+        setIsAuthenticated(false);
       } finally {
         setLoading(false);
       }
     };
 
-    loadUserFromStorage();
+    checkSession();
   }, []);
 
   const login = async (credentials) => {
     try {
+      console.log('🔐 Iniciando login...');
       const response = await apiLogin(credentials);
       
-      // O backend retorna status: "ok", não sucesso
       if (response.status === 'ok') {
-        // Criar objeto de usuário com os dados retornados
+        // Aguarda um pouco para garantir que o cookie foi salvo
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // Verifica se a sessão foi realmente criada
+        console.log('🔍 Verificando se sessão foi criada...');
+        const sessionCheck = await api.get('/Lyria/check-session');
+        console.log('📋 Resposta da verificação:', sessionCheck.data);
+        
+        if (!sessionCheck.data.autenticado) {
+          console.error('❌ Sessão não foi criada no backend!');
+          throw new Error('Falha ao criar sessão. Tente novamente.');
+        }
+        
         const userData = {
-          nome: response.usuario,  // backend retorna string do nome
+          nome: response.usuario,
           email: credentials.email,
           persona: response.persona
         };
         
-        // Salva os dados no state
         setUser(userData);
         setIsAuthenticated(true);
-        
-        // Salva no localStorage para persistência
         localStorage.setItem('lyriaUser', JSON.stringify(userData));
         
-        console.log('✅ Login bem-sucedido, usuário salvo:', userData);
-        
+        console.log('✅ Login completo e sessão verificada:', userData);
         return response;
       }
       
       return response;
     } catch (error) {
-      console.error('Erro no login:', error);
+      console.error('❌ Erro no login:', error);
       throw error;
     }
   };
 
   const logout = async () => {
     try {
-      // Chama o endpoint de logout para limpar a sessão no servidor
-      await fetch('https://lyria-back.onrender.com/Lyria/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
+      console.log('🚪 Fazendo logout...');
+      await api.post('/Lyria/logout');
+      console.log('✅ Logout no backend concluído');
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      console.error('❌ Erro ao fazer logout no backend:', error);
     } finally {
-      // Limpa os dados locais de qualquer forma
       setUser(null);
       setIsAuthenticated(false);
       localStorage.removeItem('lyriaUser');
       localStorage.removeItem('lyriaPersona');
       localStorage.removeItem('lyriaVoice');
-      console.log('✅ Logout realizado, dados limpos');
+      console.log('✅ Dados locais limpos');
     }
   };
 
