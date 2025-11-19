@@ -145,15 +145,12 @@ function ChatContent() {
       console.error("❌ Erro ao buscar conversas:", error);
     }
   }, [isAuthenticated, user, currentChatId, messages.length]);
-  
-  useEffect(() => {
-    if (location.pathname !== "/chat") return;
 
+  useEffect(() => {
     if (location.state?.newChat) {
       startNewChat();
       navigate(location.pathname, { replace: true, state: {} });
-    } 
-    else if (isAuthenticated && user) {
+    } else if (isAuthenticated && user) {
       fetchConversations();
     }
   }, [isAuthenticated, user, location.state]);
