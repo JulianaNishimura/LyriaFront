@@ -13,7 +13,7 @@ import {
 } from "../../services/LyriaApi";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
-import useViewportHeight from "../../hooks/useViewportHeight"; // NOVO HOOK
+import useViewportHeight from "../../hooks/useViewPortHeight"; // NOVO HOOK
 import {
   SpeechConfig,
   AudioConfig,
