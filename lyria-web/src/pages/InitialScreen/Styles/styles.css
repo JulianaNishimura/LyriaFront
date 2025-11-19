@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   z-index: -1;
   overflow: hidden;
   background-color: black;
@@ -129,7 +129,7 @@
   text-align: center;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .main-content {
@@ -246,7 +246,7 @@
   animation: slideInUp 0.5s ease-out;
 
   /* 1. Limita a altura do modal a 85% da altura da tela */
-  max-height: 85vh; 
+  max-height: 85dvh; 
   
   /* 2. Adiciona scroll automático APENAS se o conteúdo passar da altura máxima */
   overflow-y: auto; 
