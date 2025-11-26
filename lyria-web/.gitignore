@@ -1,0 +1,46 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependências (Obrigatório: não enviar a pasta node_modules)
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs
+*.njsproj
+*.sln
+*.sw?
+
+# Variáveis de Ambiente (CRÍTICO DE SEGURANÇA)
+# Você está usando chaves de API (VITE_SPEECH_KEY), então nunca suba esses arquivos
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vite / Build output
+dist/
+build/
+
+# Testes (caso adicione futuramente)
+coverage/
+
+# ESLint
+.eslintcache
+
+# Opcional: Se você estiver usando TypeScript (não parece ser o caso, mas previne)
+*.tsbuildinfo
