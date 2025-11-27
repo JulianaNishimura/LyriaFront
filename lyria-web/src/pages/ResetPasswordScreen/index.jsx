@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { FiEye, FiSlash, FiLock } from 'react-icons/fi';
+import { FiEye, FiEyeSlash, FiLock } from 'react-icons/fi';
 import { useToast } from '../../context/ToastContext';
 import { redefinirSenha } from '../../services/LyriaApi';
 import PasswordStrength from '../../components/PasswordStrength';
@@ -117,7 +117,7 @@ function ResetPasswordScreen() {
               className="password-toggle-icon"
               onClick={() => setPasswordVisible(!passwordVisible)}
             >
-              {passwordVisible ? <FiSlash /> : <FiEye />}
+              {passwordVisible ? <FiEyeSlash /> : <FiEye />}
             </span>
           </div>
 
@@ -133,7 +133,7 @@ function ResetPasswordScreen() {
               className="password-toggle-icon"
               onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
             >
-              {confirmPasswordVisible ? <FiSlash /> : <FiEye />}
+              {confirmPasswordVisible ? <FiEyeSlash /> : <FiEye />}
             </span>
           </div>
 

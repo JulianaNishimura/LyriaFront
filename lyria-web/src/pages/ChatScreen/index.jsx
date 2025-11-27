@@ -29,7 +29,6 @@ import ChatInput from "../../components/ChatInput";
 import PromptSuggestions from "../../components/PromptSuggestions";
 import SettingsModal from "../../components/SettingsModal";
 import ConfirmationModal from "../../components/ConfirmationModal";
-import useSessionMonitor from "../../hooks/useSessionMonitor";
 
 const speechConfig = SpeechConfig.fromSubscription(
   import.meta.env.VITE_SPEECH_KEY,
@@ -52,7 +51,6 @@ function ChatContent() {
   const navigate = useNavigate();
   const { addToast } = useToast();
   
-  useSessionMonitor();
   // NOVO: Hook para corrigir altura da viewport
   useViewportHeight();
   
@@ -248,6 +246,9 @@ function ChatContent() {
     );
   };
 
+  // Continua na próxima parte...
+  // Continuação do ChatContent...
+
   const handleSend = async (textToSend) => {
     const trimmedInput = (typeof textToSend === "string" ? textToSend : input).trim();
     if (!trimmedInput || isBotTyping || isListening) return;
@@ -315,11 +316,6 @@ function ChatContent() {
       }
   
     } catch (error) {
-      if (error.response?.status === 401 ) {
-        console.warn('⚠️ Sessão expirada ao enviar mensagem');
-        return;
-      }
-      
       console.error("❌ Erro em handleSend:", error);
       const errorMessage = {
         id: crypto.randomUUID(),

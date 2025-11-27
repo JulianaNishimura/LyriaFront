@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import './Styles/styles.css';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useModal } from '../../hooks/useModal';
-import { useToast } from '../../context/ToastContext';
 import LoginPrompt from '../../components/LoginPrompt';
 import Header from '../../components/Header';
 import HeroSection from '../../components/HeroSection';
@@ -22,19 +21,6 @@ function InitialScreen() {
   // Contexto e navegação
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const { addToast } = useToast();
-
-  useEffect(() => {
-    // Verifica se foi redirecionado por sessão expirada
-    if (location.state?.sessionExpired) {
-      console.log('[InitialScreen] 🔴 Usuário redirecionado por sessão expirada');
-      addToast('Sua sessão expirou. Por favor, faça login novamente.', 'error');
-      
-      // Limpa o state para não mostrar a mensagem novamente
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, [location.state, navigate, addToast]);
 
   // ==================== LIFECYCLE LOGS ====================
   
