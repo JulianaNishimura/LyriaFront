@@ -9,11 +9,11 @@ import {
   getPersonas,
   putPersona,
   getPersona,
-  createConversation, 
+  createConversation,
 } from "../../services/LyriaApi";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
-import useViewportHeight from "../../hooks/useViewportHeight"; // NOVO HOOK
+import useViewportHeight from "../../hooks/useViewPortHeight";
 import {
   SpeechConfig,
   AudioConfig,
@@ -51,11 +51,11 @@ function ChatContent() {
   const location = useLocation();
   const navigate = useNavigate();
   const { addToast } = useToast();
-  
+
   useSessionMonitor();
   // NOVO: Hook para corrigir altura da viewport
   useViewportHeight();
-  
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isBotTyping, setIsBotTyping] = useState(false);
@@ -75,7 +75,8 @@ function ChatContent() {
     isPlaying: false,
   });
   const [selectedVoice, setSelectedVoice] = useState(availableVoices[0].value);
-  const [chatBodyAnimationClass, setChatBodyAnimationClass] = useState("fade-in");
+  const [chatBodyAnimationClass, setChatBodyAnimationClass] =
+    useState("fade-in");
   const [isLoginPromptVisible, setLoginPromptVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [personas, setPersonas] = useState({});
@@ -113,8 +114,10 @@ function ChatContent() {
       if (isAuthenticated && user && Object.keys(personas).length > 0) {
         try {
           const personaResponse = await getPersona();
-          const personaValue = personaResponse?.persona_escolhida || personaResponse;
-          if (personaValue && personas[personaValue]) setSelectedPersona(personaValue);
+          const personaValue =
+            personaResponse?.persona_escolhida || personaResponse;
+          if (personaValue && personas[personaValue])
+            setSelectedPersona(personaValue);
         } catch (error) {
           console.error("Erro ao buscar persona do usuário:", error);
         }
@@ -133,17 +136,36 @@ function ChatContent() {
       const conversationsWithIds = (response.conversas || []).map((convo) => ({
         ...convo,
         id: convo.conversa_id,
-        titulo: (convo.mensagens[0].pergunta || "Nova conversa").substring(0, 40) + "...",
+        titulo:
+          (convo.mensagens[0].pergunta || "Nova conversa").substring(0, 40) +
+          "...",
       }));
       setConversations(conversationsWithIds);
 
-      if (response.conversa_ativa && !currentChatId && messages.length === 0 && !isNewChatFlow.current) {
+      if (
+        response.conversa_ativa &&
+        !currentChatId &&
+        messages.length === 0 &&
+        !isNewChatFlow.current
+      ) {
         setCurrentChatId(response.conversa_ativa);
-        const conversaAtiva = conversationsWithIds.find(c => c.id === response.conversa_ativa);
+        const conversaAtiva = conversationsWithIds.find(
+          (c) => c.id === response.conversa_ativa
+        );
         if (conversaAtiva) {
           const historicalMessages = [
-            { id: crypto.randomUUID(), sender: "user", text: conversaAtiva.mensagens[0].pergunta, animate: false },
-            { id: crypto.randomUUID(), sender: "bot", text: conversaAtiva.mensagens[0].resposta, animate: false },
+            {
+              id: crypto.randomUUID(),
+              sender: "user",
+              text: conversaAtiva.mensagens[0].pergunta,
+              animate: false,
+            },
+            {
+              id: crypto.randomUUID(),
+              sender: "bot",
+              text: conversaAtiva.mensagens[0].resposta,
+              animate: false,
+            },
           ];
           setMessages(historicalMessages);
         }
@@ -190,10 +212,10 @@ function ChatContent() {
       scrollToBottom();
     });
 
-    observer.observe(chatBody, { 
-      childList: true, 
+    observer.observe(chatBody, {
+      childList: true,
       subtree: true,
-      characterData: true // ADICIONADO: Observa mudanças em texto
+      characterData: true, // ADICIONADO: Observa mudanças em texto
     });
 
     // Timeout adicional para garantir scroll após renderização
@@ -208,9 +230,13 @@ function ChatContent() {
   const stripMarkdown = (text = "") => {
     return text
       .replace(/```[\s\S]*?```/g, " ")
-      .replace(/`/g, "").replace(/\*\*/g, "").replace(/\*/g, "")
-      .replace(/#{1,6}\s/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-      .replace(/!\[[^\]]*\]\([^)]+\)/g, " ").trim();
+      .replace(/`/g, "")
+      .replace(/\*\*/g, "")
+      .replace(/\*/g, "")
+      .replace(/#{1,6}\s/g, "")
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
+      .trim();
   };
 
   const handleAudioPlayback = (messageId, text) => {
@@ -249,21 +275,27 @@ function ChatContent() {
   };
 
   const handleSend = async (textToSend) => {
-    const trimmedInput = (typeof textToSend === "string" ? textToSend : input).trim();
+    const trimmedInput = (
+      typeof textToSend === "string" ? textToSend : input
+    ).trim();
     if (!trimmedInput || isBotTyping || isListening) return;
-  
+
     if (!isConversationStarted) {
       setIsConversationStarted(true);
     }
-  
-    const userMessage = { id: crypto.randomUUID(), sender: "user", text: trimmedInput };
+
+    const userMessage = {
+      id: crypto.randomUUID(),
+      sender: "user",
+      text: trimmedInput,
+    };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsBotTyping(true);
-  
+
     try {
       let conversaId = currentChatId;
-  
+
       if (isAuthenticated && user) {
         if (!conversaId) {
           try {
@@ -284,13 +316,13 @@ function ChatContent() {
             return;
           }
         }
-  
+
         const response = await postMessage(trimmedInput, conversaId);
-  
+
         if (response.conversa_id && response.conversa_id !== conversaId) {
           setCurrentChatId(response.conversa_id);
         }
-  
+
         const botMessage = {
           id: crypto.randomUUID(),
           sender: "bot",
@@ -299,9 +331,8 @@ function ChatContent() {
         };
         setMessages((prev) => [...prev, botMessage]);
         handleAudioPlayback(botMessage.id, response.resposta);
-        
+
         fetchConversations();
-  
       } else {
         const response = await conversarAnonimo(trimmedInput, selectedPersona);
         const botMessage = {
@@ -313,13 +344,12 @@ function ChatContent() {
         setMessages((prev) => [...prev, botMessage]);
         handleAudioPlayback(botMessage.id, response.resposta);
       }
-  
     } catch (error) {
-      if (error.response?.status === 401 ) {
-        console.warn('⚠️ Sessão expirada ao enviar mensagem');
+      if (error.response?.status === 401) {
+        console.warn("⚠️ Sessão expirada ao enviar mensagem");
         return;
       }
-      
+
       console.error("❌ Erro em handleSend:", error);
       const errorMessage = {
         id: crypto.randomUUID(),
@@ -425,26 +455,36 @@ function ChatContent() {
         setCurrentChatId(null);
       }
       setChatBodyAnimationClass("fade-in");
-      
+
       setTimeout(() => {
         isNewChatFlow.current = false;
         setIsStartingNewChat(false);
-      }, 20); 
+      }, 20);
     }, 200);
   };
 
   const loadChat = (id) => {
-    console.log(`loadChat id = ${id}`)
+    console.log(`loadChat id = ${id}`);
     if (id === currentChatId) return setHistoryVisible(false);
-    
+
     const conversation = conversations.find((c) => c.id === id);
     if (!conversation) return console.error("❌ Conversa não encontrada:", id);
-    
+
     const historicalMessages = conversation.mensagens.flatMap((msg) => [
-      { id: crypto.randomUUID(), sender: "user", text: msg.pergunta, animate: false },
-      { id: crypto.randomUUID(), sender: "bot", text: msg.resposta, animate: false },
+      {
+        id: crypto.randomUUID(),
+        sender: "user",
+        text: msg.pergunta,
+        animate: false,
+      },
+      {
+        id: crypto.randomUUID(),
+        sender: "bot",
+        text: msg.resposta,
+        animate: false,
+      },
     ]);
-    
+
     setCurrentChatId(id);
     setMessages(historicalMessages);
     setChatBodyAnimationClass("fade-in");
@@ -453,15 +493,15 @@ function ChatContent() {
 
   const deleteChat = async (id) => {
     console.log(`🗑️ Tentando deletar conversa com ID: ${id}`);
-    
+
     try {
       const response = await deleteConversation(id);
 
       if (response.sucesso) {
         console.log(`✅ Conversa ${id} deletada com sucesso`);
-        
+
         setConversations((prev) => prev.filter((convo) => convo.id !== id));
-        addToast('Conversa deletada com sucesso!', 'success');
+        addToast("Conversa deletada com sucesso!", "success");
 
         if (currentChatId === id) {
           console.log(`📌 Conversa deletada era a ativa, iniciando nova...`);
@@ -469,11 +509,14 @@ function ChatContent() {
         }
       } else {
         console.error(`❌ Falha ao deletar: ${response.erro}`);
-        addToast(response.erro || 'Falha ao excluir conversa', 'error');
+        addToast(response.erro || "Falha ao excluir conversa", "error");
       }
     } catch (error) {
       console.error(`❌ Erro ao deletar conversa:`, error);
-      addToast(error.message || 'Ocorreu um erro ao excluir a conversa', 'error');
+      addToast(
+        error.message || "Ocorreu um erro ao excluir a conversa",
+        "error"
+      );
     }
   };
 
@@ -522,12 +565,12 @@ function ChatContent() {
   return (
     <>
       {isLoginPromptVisible && (
-        <LoginPrompt 
-          onDismiss={() => setLoginPromptVisible(false)} 
-          showContinueAsGuest={false} 
+        <LoginPrompt
+          onDismiss={() => setLoginPromptVisible(false)}
+          showContinueAsGuest={false}
         />
       )}
-      
+
       <ConfirmationModal
         isOpen={isDeleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
@@ -535,7 +578,7 @@ function ChatContent() {
         title="Confirmar Exclusão"
         message="Você tem certeza que deseja apagar esta conversa? Esta ação não pode ser desfeita."
       />
-      
+
       <SettingsModal
         isOpen={isSettingsModalVisible}
         onClose={() => setSettingsModalVisible(false)}
@@ -547,7 +590,7 @@ function ChatContent() {
         onVoiceChange={handleVoiceChange}
         isConversationStarted={isConversationStarted}
       />
-      
+
       <HistoryPanel
         isVisible={isHistoryVisible}
         onClose={() => setHistoryVisible(false)}
@@ -555,8 +598,10 @@ function ChatContent() {
         loadChat={loadChat}
         deleteChat={deleteChat}
       />
-      
-      <main className={`galaxy-chat-area ${isHistoryVisible ? "history-open" : ""}`}>
+
+      <main
+        className={`galaxy-chat-area ${isHistoryVisible ? "history-open" : ""}`}
+      >
         <ChatHeader
           onHistoryClick={handleHistoryClick}
           isSpeechEnabled={isSpeechEnabled}
@@ -564,8 +609,11 @@ function ChatContent() {
           onNewChatClick={handleNewChatClick}
           onSettingsClick={handleSettingsClick}
         />
-        
-        <div ref={chatBodyRef} className={`galaxy-chat-body ${chatBodyAnimationClass}`}>
+
+        <div
+          ref={chatBodyRef}
+          className={`galaxy-chat-body ${chatBodyAnimationClass}`}
+        >
           {messages.length === 0 && !isStartingNewChat ? (
             <PromptSuggestions onSuggestionClick={handleSend} />
           ) : (
@@ -578,7 +626,7 @@ function ChatContent() {
             />
           )}
         </div>
-        
+
         <ChatInput
           input={input}
           setInput={setInput}
