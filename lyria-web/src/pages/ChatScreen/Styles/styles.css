@@ -1,8 +1,7 @@
 .galaxy-chat-container {
   position: relative;
   width: 100%;
-  min-height: 100vh; /* Changed from height: 100% to ensure full viewport coverage */
-  height: auto;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;

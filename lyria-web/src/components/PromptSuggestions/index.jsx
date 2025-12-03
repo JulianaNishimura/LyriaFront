@@ -18,23 +18,23 @@ const PromptSuggestions = ({ onSuggestionClick }) => (
       </div>
       <div
         className="suggestion-card"
-        onClick={() => onSuggestionClick("Qual a melhor turma do SENAI?")}
+        onClick={() => onSuggestionClick("Me conte uma curiosidade")}
       >
         <p>
-          <strong>Qual a melhor turma?</strong>
+          <strong>Me conte uma curiosidade</strong>
         </p>
-        <span>Uma pergunta capciosa...</span>
+        <span>Descubra algo interessante</span>
       </div>
       <div
         className="suggestion-card"
         onClick={() =>
-          onSuggestionClick("Me dê uma ideia para um projeto React")
+          onSuggestionClick("Me conte uma piada")
         }
       >
         <p>
-          <strong>Ideia de projeto</strong>
+          <strong>Me conte uma piada</strong>
         </p>
-        <span>Para inspirar sua criatividade</span>
+        <span>Para dar boas risadas</span>
       </div>
       <div
         className="suggestion-card"

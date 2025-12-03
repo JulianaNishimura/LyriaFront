@@ -7,18 +7,59 @@ import LoadingScreen from "../components/LoadingScreen";
 import ResetPassword from "../pages/ResetPasswordScreen";
 import GalaxyLayout from "../components/GalaxyLayout";
 import AnimatedPage from "../components/AnimatedPage";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export default function AppRouter() {
   return (
     <Router>
       <Routes>
         <Route element={<GalaxyLayout />}>
-          <Route path="/" element={<AnimatedPage><Home /></AnimatedPage>} />
-          <Route path="/loading" element={<LoadingScreen />} />
-          <Route path="/RegistrationAndLogin" element={<RegistrationAndLogin />}/>
-          <Route path="/chat" element={<AnimatedPage><Chat /></AnimatedPage>} />
-          <Route path="/profile" element={<AnimatedPage><Profile /></AnimatedPage>} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          {/* Rotas públicas */}
+          <Route 
+            path="/" 
+            element={
+              <AnimatedPage>
+                <Home />
+              </AnimatedPage>
+            } 
+          />
+          
+          <Route 
+            path="/RegistrationAndLogin" 
+            element={<RegistrationAndLogin />}
+          />
+          
+          <Route 
+            path="/reset-password" 
+            element={<ResetPassword />} 
+          />
+          
+          <Route 
+            path="/loading" 
+            element={<LoadingScreen />} 
+          />
+          
+          {/* Rotas que funcionam com ou sem auth */}
+          <Route 
+            path="/chat" 
+            element={
+              <AnimatedPage>
+                <Chat />
+              </AnimatedPage>
+            } 
+          />
+          
+          {/* Rotas protegidas - requerem autenticação */}
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute requireAuth={true}>
+                <AnimatedPage>
+                  <Profile />
+                </AnimatedPage>
+              </ProtectedRoute>
+            } 
+          />
         </Route>
       </Routes>
     </Router>
